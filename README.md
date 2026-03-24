@@ -22,17 +22,17 @@ All three VMs share the same security baseline and are SSH-accessible **only** t
 
 ```
                         ┌─────────────────────────────────────────────┐
-                        │              INTERNET                        │
+                        │              INTERNET                       │
                         └──────────────┬──────────────────────────────┘
                                        │
                         ┌──────────────▼──────────────────────────────┐
-                        │           CLOUDFLARE EDGE                    │
+                        │           CLOUDFLARE EDGE                   │
                         │  WAF · DDoS · Tor/Anon Proxy Block · TLS    │
                         └───┬──────────────┬──────────────┬───────────┘
                             │ CF Tunnel    │ CF Tunnel    │ CF Tunnel
                 ────────────▼──────  ──────▼──────  ──────▼──────────
-               │  auth.sampledomain.com │ │learn.devoops│ │ tty.devoops  │
-               │                  │ │    .lol     │ │    .lol      │
+               │  auth.sample     │ │learn.sample │ │ tty.sample   │
+               │  domain.com      │ │ domain.com  │ │  domain.com  │
                │  ┌─────────────┐ │ │ ┌─────────┐ │ │ ┌──────────┐ │
                │  │  Keycloak   │ │ │ │  Moodle │ │ │ │Guacamole │ │
                │  │  26.1.0     │ │ │ │  4.5    │ │ │ │  1.6.0   │ │
@@ -43,15 +43,15 @@ All three VMs share the same security baseline and are SSH-accessible **only** t
                │  └─────────────┘ │ │ └─────────┘ │ │ └──────────┘ │
                │  192.168.2.157   │ │192.168.2.243│ │192.168.2.197 │
                └──────────────────┘ └─────────────┘ └──────────────┘
-                                                              │
+                                                             │
                           ┌──────────────────────────────────┘
                           │  SSH from 192.168.2.197 only
                           │
               ┌───────────▼──────────────────────────┐
-              │          PROXMOX VE 9.1               │
-              │    192.168.2.0/24 LAN subnet          │
-              │    2 vCPU / 2GB RAM per VM            │
-              │    Ubuntu 24.04.4 LTS                 │
+              │          PROXMOX VE 9.1              │
+              │    192.168.2.0/24 LAN subnet         │
+              │    2 vCPU / 2GB RAM per VM           │
+              │    Ubuntu 24.04.4 LTS                │
               └──────────────────────────────────────┘
 ```
 
