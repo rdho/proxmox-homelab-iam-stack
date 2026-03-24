@@ -10,9 +10,9 @@ A fully self-hosted homelab platform running three Ubuntu 24.04 VMs on Proxmox V
 
 | VM | Role | Public URL |
 |---|---|---|
-| **Keycloak 26.1** | Identity & Access Management (SSO) | `auth.devoops.lol` |
-| **Moodle 4.5** | Learning Management System | `learn.devoops.lol` |
-| **Guacamole 1.6** | Remote Access / Jump Host | `tty.devoops.lol` |
+| **Keycloak 26.1** | Identity & Access Management (SSO) | `auth.sampledomain.com` |
+| **Moodle 4.5** | Learning Management System | `learn.sampledomain.com` |
+| **Guacamole 1.6** | Remote Access / Jump Host | `tty.sampledomain.com` |
 
 All three VMs share the same security baseline and are SSH-accessible **only** through Guacamole — no direct SSH from anywhere else.
 
@@ -31,7 +31,7 @@ All three VMs share the same security baseline and are SSH-accessible **only** t
                         └───┬──────────────┬──────────────┬───────────┘
                             │ CF Tunnel    │ CF Tunnel    │ CF Tunnel
                 ────────────▼──────  ──────▼──────  ──────▼──────────
-               │  auth.devoops.lol │ │learn.devoops│ │ tty.devoops  │
+               │  auth.sampledomain.com │ │learn.devoops│ │ tty.devoops  │
                │                  │ │    .lol     │ │    .lol      │
                │  ┌─────────────┐ │ │ ┌─────────┐ │ │ ┌──────────┐ │
                │  │  Keycloak   │ │ │ │  Moodle │ │ │ │Guacamole │ │

@@ -4,8 +4,8 @@ set -euo pipefail
 # =============================================================================
 # Purpose:     Install Keycloak 26.x on Ubuntu 24.04
 #              - PostgreSQL 16 backend
-#              - Nginx reverse proxy (iam.devoops.lol → local dashboard)
-#              - Cloudflare Tunnel for auth.devoops.lol (public OIDC endpoint)
+#              - Nginx reverse proxy (iam.sampledomain.com → local dashboard)
+#              - Cloudflare Tunnel for auth.sampledomain.com (public OIDC endpoint)
 #              - Let's Encrypt SSL via Cloudflare DNS challenge
 #              - iptables: dashboard accessible only from LAN, public via CF Tunnel
 # Usage:       sudo ./install-keycloak.sh
@@ -16,8 +16,8 @@ set -euo pipefail
 KC_VERSION="26.1.0"               # Latest Keycloak 26.x as of early 2026
 KC_HOME="/opt/keycloak"
 KC_USER="keycloak"
-PUBLIC_DOMAIN="auth.devoops.lol"   # Cloudflare Tunnel public endpoint (OIDC redirects)
-ADMIN_DOMAIN="iam.devoops.lol"     # Internal Nginx proxy (LAN only)
+PUBLIC_DOMAIN="auth.sampledomain.com"   # Cloudflare Tunnel public endpoint (OIDC redirects)
+ADMIN_DOMAIN="iam.sampledomain.com"     # Internal Nginx proxy (LAN only)
 VM_IP="192.168.2.157"
 GUACAMOLE_IP="192.168.2.197"
 DB_NAME="keycloak"
@@ -180,11 +180,11 @@ fi
 # === NGINX REVERSE PROXY ===
 echo "[INFO] Configuring Nginx reverse proxy..."
 
-# auth.devoops.lol → internal Keycloak (used by Cloudflare Tunnel)
-# iam.devoops.lol  → internal Keycloak admin (LAN-only access)
+# auth.sampledomain.com → internal Keycloak (used by Cloudflare Tunnel)
+# iam.sampledomain.com  → internal Keycloak admin (LAN-only access)
 
 cat > /etc/nginx/sites-available/keycloak-public.conf << EOF
-# auth.devoops.lol — public-facing endpoint for OIDC redirects
+# auth.sampledomain.com — public-facing endpoint for OIDC redirects
 # Traffic reaches here via Cloudflare Tunnel (127.0.0.1)
 server {
     listen 127.0.0.1:7080;   # CF Tunnel sends traffic here
@@ -207,9 +207,9 @@ server {
 }
 EOF
 
-# iam.devoops.lol — internal admin dashboard, LAN-only HTTPS
+# iam.sampledomain.com — internal admin dashboard, LAN-only HTTPS
 cat > /etc/nginx/sites-available/keycloak-admin.conf << EOF
-# iam.devoops.lol — internal admin dashboard
+# iam.sampledomain.com — internal admin dashboard
 # Accessible only from 192.168.2.0/24 subnet
 server {
     listen 443 ssl;
@@ -254,7 +254,7 @@ nginx -t
 systemctl enable --now nginx
 
 # === INSTALL CLOUDFLARED ===
-echo "[INFO] Installing cloudflared for auth.devoops.lol..."
+echo "[INFO] Installing cloudflared for auth.sampledomain.com..."
 curl -sSL https://pkg.cloudflare.com/cloudflare-main.gpg \
   | gpg --dearmor > /usr/share/keyrings/cloudflare-main.gpg
 echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared any main" \
@@ -307,7 +307,7 @@ echo ""
 echo "  3. certbot certonly --dns-cloudflare \\"
 echo "       --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini \\"
 echo "       -d ${PUBLIC_DOMAIN} -d ${ADMIN_DOMAIN} \\"
-echo "       --non-interactive --agree-tos --email admin@devoops.lol"
+echo "       --non-interactive --agree-tos --email admin@sampledomain.com"
 echo ""
 echo "  4. systemctl reload nginx"
 echo "[INFO] ==========================================================="

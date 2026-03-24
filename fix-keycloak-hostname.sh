@@ -7,11 +7,11 @@ set -euo pipefail
 #
 # Root cause:  Keycloak 26 (hostname v2) requires 'hostname' to be a full URL
 #              (https://...) when 'hostname-admin' is also set. The original
-#              config had: hostname=auth.devoops.lol  ← bare hostname, invalid
-#              Fix:        hostname=https://auth.devoops.lol  ← full URL
+#              config had: hostname=auth.sampledomain.com  ← bare hostname, invalid
+#              Fix:        hostname=https://auth.sampledomain.com  ← full URL
 #
 #              Additionally, 'hostname-admin' must also be a full URL.
-#              The original had: hostname-admin=https://iam.devoops.lol ← OK
+#              The original had: hostname-admin=https://iam.sampledomain.com ← OK
 #              but it still fails because 'hostname' was bare.
 #
 #              After fixing keycloak.conf, 'kc.sh build' must be re-run to
@@ -26,8 +26,8 @@ set -euo pipefail
 KC_HOME="/opt/keycloak"
 KC_USER="keycloak"
 KC_CONF="${KC_HOME}/conf/keycloak.conf"
-PUBLIC_DOMAIN="auth.devoops.lol"
-ADMIN_DOMAIN="iam.devoops.lol"
+PUBLIC_DOMAIN="auth.sampledomain.com"
+ADMIN_DOMAIN="iam.sampledomain.com"
 
 # === PREFLIGHT ===
 [[ $EUID -ne 0 ]] && { echo "[ERROR] Must run as root"; exit 1; }
@@ -55,7 +55,7 @@ echo "[INFO] Config backed up."
 
 # === REWRITE keycloak.conf WITH CORRECT VALUES ===
 # Key fixes vs the original:
-#   hostname=auth.devoops.lol          → hostname=https://auth.devoops.lol
+#   hostname=auth.sampledomain.com          → hostname=https://auth.sampledomain.com
 #   hostname-admin=https://iam...      → unchanged (already full URL, but re-stated for clarity)
 #
 # Keycloak 26 hostname v2 rules:
@@ -90,7 +90,7 @@ https-required=external   # Enforce HTTPS for external requests, not for localho
 
 # === Hostname (v2) ===
 # CRITICAL: When hostname-admin is set, hostname MUST be a full URL (https://...)
-# A bare hostname like "auth.devoops.lol" is rejected in production mode.
+# A bare hostname like "auth.sampledomain.com" is rejected in production mode.
 # Reference: https://www.keycloak.org/server/hostname
 hostname=https://${PUBLIC_DOMAIN}
 hostname-admin=https://${ADMIN_DOMAIN}

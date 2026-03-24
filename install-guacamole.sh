@@ -21,7 +21,7 @@ set -euo pipefail
 # =============================================================================
 
 GUAC_VER="1.6.0"
-DOMAIN="tty.devoops.lol"
+DOMAIN="tty.sampledomain.com"
 GUAC_DB="guacamole_db"
 GUAC_DB_USER="guacamole_user"
 GUAC_DB_PASS="$(openssl rand -base64 24)"
@@ -260,7 +260,7 @@ rm -f /etc/nginx/sites-enabled/default
 cat > /etc/nginx/sites-available/guacamole-http.conf << 'EOF'
 server {
     listen 80;
-    server_name tty.devoops.lol;
+    server_name tty.sampledomain.com;
 
     location /guacamole/ {
         proxy_pass            http://127.0.0.1:8080/guacamole/;

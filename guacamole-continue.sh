@@ -17,7 +17,7 @@ set -euo pipefail
 # Usage:       sudo bash guacamole-continue.sh \
 #                <CF_API_TOKEN> <CF_TUNNEL_TOKEN> <KC_CLIENT_SECRET>
 #
-#   CF_API_TOKEN       Zone:DNS:Edit token for devoops.lol
+#   CF_API_TOKEN       Zone:DNS:Edit token for sampledomain.com
 #                      dash.cloudflare.com → My Profile → API Tokens
 #
 #   CF_TUNNEL_TOKEN    Remotely-managed tunnel token
@@ -25,7 +25,7 @@ set -euo pipefail
 #                      Name: "guacamole" → copy token
 #
 #   KC_CLIENT_SECRET   Keycloak client secret for 'guacamole' client
-#                      iam.devoops.lol → moodle realm →
+#                      iam.sampledomain.com → moodle realm →
 #                      Clients → guacamole → Credentials tab
 #
 # Prerequisites:
@@ -33,17 +33,17 @@ set -euo pipefail
 #   - guacd running on 127.0.0.1:4822
 #   - Guacamole (Tomcat 10) running on 127.0.0.1:8080
 #   - Keycloak 'guacamole' client exists in 'moodle' realm:
-#       Root URL:            https://tty.devoops.lol/guacamole/
-#       Valid redirect URIs: https://tty.devoops.lol/guacamole/*
+#       Root URL:            https://tty.sampledomain.com/guacamole/
+#       Valid redirect URIs: https://tty.sampledomain.com/guacamole/*
 #       Client authentication: ON (confidential)
 #
 # Last Updated: 2026-03
 # =============================================================================
 
 # === VARIABLES ===
-DOMAIN="tty.devoops.lol"
-ADMIN_EMAIL="admin@devoops.lol"
-KEYCLOAK_URL="https://auth.devoops.lol"
+DOMAIN="tty.sampledomain.com"
+ADMIN_EMAIL="admin@sampledomain.com"
+KEYCLOAK_URL="https://auth.sampledomain.com"
 KEYCLOAK_REALM="moodle"
 CERT_DIR="/etc/letsencrypt/live/${DOMAIN}"
 CF_CREDS="/etc/letsencrypt/cloudflare.ini"
@@ -68,7 +68,7 @@ if [[ -z "$CF_API_TOKEN" || -z "$CF_TUNNEL_TOKEN" || -z "$KC_CLIENT_SECRET" ]]; 
   echo ""
   echo "  CF_API_TOKEN:     Zone:DNS:Edit token → dash.cloudflare.com"
   echo "  CF_TUNNEL_TOKEN:  Zero Trust → Tunnels → guacamole → token"
-  echo "  KC_CLIENT_SECRET: iam.devoops.lol → moodle realm → Clients → guacamole → Credentials"
+  echo "  KC_CLIENT_SECRET: iam.sampledomain.com → moodle realm → Clients → guacamole → Credentials"
   exit 1
 fi
 
@@ -126,7 +126,7 @@ echo ""
 echo "[STEP 3] Writing Cloudflare API credentials..."
 mkdir -p /etc/letsencrypt
 cat > "$CF_CREDS" << EOF
-# Cloudflare API token — Zone:DNS:Edit on devoops.lol
+# Cloudflare API token — Zone:DNS:Edit on sampledomain.com
 dns_cloudflare_api_token = ${CF_API_TOKEN}
 EOF
 chmod 600 "$CF_CREDS"
@@ -171,7 +171,7 @@ certbot renew --dry-run --quiet \
 
 # === STEP 6: Nginx full config (HTTP for cloudflared + HTTPS for LAN) ========
 # Lesson from Moodle VM: cloudflared → https://localhost:443 fails with
-# "certificate valid for tty.devoops.lol, not localhost" → 502.
+# "certificate valid for tty.sampledomain.com, not localhost" → 502.
 # Solution: cloudflared → http://127.0.0.1:80 (no TLS mismatch).
 # Port 443 stays for direct LAN access from 192.168.2.x.
 echo ""
@@ -366,7 +366,7 @@ echo "  Zero Trust → Networks → Tunnels → guacamole → Edit"
 echo "  → Public Hostname → Add:"
 echo ""
 echo "    Subdomain : tty"
-echo "    Domain    : devoops.lol"
+echo "    Domain    : sampledomain.com"
 echo "    Type      : HTTP"
 echo "    URL       : 127.0.0.1:80"
 echo ""

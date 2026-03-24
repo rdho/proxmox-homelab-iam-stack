@@ -4,7 +4,7 @@ set -euo pipefail
 # =============================================================================
 # Purpose:     Tor exit node blocking via iptables + ipset
 #
-# NOTE: For devoops.lol infrastructure this script has LIMITED effect:
+# NOTE: For sampledomain.com infrastructure this script has LIMITED effect:
 #
 #   Web traffic (Moodle/Keycloak/Guacamole):
 #     Tor → Cloudflare edge → cloudflared tunnel → VM (127.0.0.1)

@@ -4,18 +4,18 @@ set -euo pipefail
 # =============================================================================
 # Purpose:     Install and configure Moodle on Ubuntu 24.04
 #              - Apache 2.4 (latest), PHP 8.3-FPM, PostgreSQL 16
-#              - Let's Encrypt SSL (learn.devoops.lol)
+#              - Let's Encrypt SSL (learn.sampledomain.com)
 #              - HTTP → HTTPS redirect
 #              - Keycloak OIDC auth integration
 #              - Cloudflare Tunnel (cloudflared)
 #              - iptables firewall (HTTP/HTTPS open, SSH from Guacamole only)
 # Usage:       sudo ./install-moodle.sh
-# Prerequisites: Ubuntu 24.04, DNS A record for learn.devoops.lol → Cloudflare Tunnel
+# Prerequisites: Ubuntu 24.04, DNS A record for learn.sampledomain.com → Cloudflare Tunnel
 # Last Updated: 2026-03
 # =============================================================================
 
 # === VARIABLES ===
-DOMAIN="learn.devoops.lol"
+DOMAIN="learn.sampledomain.com"
 MOODLE_DIR="/var/www/moodle"
 MOODLE_DATA="/var/moodledata"
 DB_NAME="moodledb"
@@ -23,7 +23,7 @@ DB_USER="moodleuser"
 DB_PASS="$(openssl rand -base64 24)"   # Generated on first run; save this!
 ADMIN_USER="sysadmin"
 GUACAMOLE_IP="192.168.2.197"
-KEYCLOAK_URL="https://auth.devoops.lol"
+KEYCLOAK_URL="https://auth.sampledomain.com"
 MOODLE_VERSION="MOODLE_405_STABLE"     # Latest stable as of early 2026 (4.5.x)
 
 # === PREFLIGHT ===
@@ -215,7 +215,7 @@ echo "[INFO] ==========================================================="
 echo "[INFO] Run the following command to obtain SSL cert:"
 echo ""
 echo "  certbot --apache -d ${DOMAIN} --non-interactive --agree-tos \\"
-echo "    --email admin@devoops.lol --redirect"
+echo "    --email admin@sampledomain.com --redirect"
 echo ""
 echo "[INFO] NOTE: DNS must be pointing to Cloudflare Tunnel BEFORE running certbot."
 echo "[INFO] For Cloudflare Tunnel (proxied), use certbot with DNS challenge:"

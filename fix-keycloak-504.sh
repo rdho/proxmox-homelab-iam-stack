@@ -40,8 +40,8 @@ KC_USER="keycloak"
 KC_CONF="${KC_HOME}/conf/keycloak.conf"
 NGINX_PUBLIC_CONF="/etc/nginx/sites-available/keycloak-public.conf"
 NGINX_ADMIN_CONF="/etc/nginx/sites-available/keycloak-admin.conf"
-PUBLIC_DOMAIN="auth.devoops.lol"
-ADMIN_DOMAIN="iam.devoops.lol"
+PUBLIC_DOMAIN="auth.sampledomain.com"
+ADMIN_DOMAIN="iam.sampledomain.com"
 
 # ── preflight ─────────────────────────────────────────────────────────────────
 [[ $EUID -ne 0 ]] && { echo "[ERROR] Run as root"; exit 1; }
@@ -95,7 +95,7 @@ echo "  $TIMING"
 # ── STEP 4: patch Nginx configs ───────────────────────────────────────────────
 # There are two separate files matching what install-keycloak.sh created:
 #   keycloak-public.conf  — listens on 127.0.0.1:7080 (cloudflared originService)
-#   keycloak-admin.conf   — listens on 443 ssl (LAN-only iam.devoops.lol)
+#   keycloak-admin.conf   — listens on 443 ssl (LAN-only iam.sampledomain.com)
 #
 # Key changes vs originals:
 #   proxy_read_timeout 300s   ← was 60s default → root cause of the 504
@@ -111,12 +111,12 @@ echo "[STEP 4a] Patching $NGINX_PUBLIC_CONF ..."
 cp "$NGINX_PUBLIC_CONF" "${NGINX_PUBLIC_CONF}.bak.$(date +%Y%m%d%H%M%S)"
 
 cat > "$NGINX_PUBLIC_CONF" << 'NGINXEOF'
-# auth.devoops.lol — public-facing OIDC endpoint
+# auth.sampledomain.com — public-facing OIDC endpoint
 # Cloudflare Tunnel sends traffic to 127.0.0.1:7080 (plain HTTP, no TLS here;
 # Cloudflare terminates TLS at its edge, tunnel leg is mTLS internally).
 server {
     listen 127.0.0.1:7080;
-    server_name auth.devoops.lol;
+    server_name auth.sampledomain.com;
 
     # ── Proxy timeouts ────────────────────────────────────────────────────────
     # Keycloak 26 on 2GB RAM takes 60-120s to warm up on first request.
@@ -154,11 +154,11 @@ echo ""
 echo "[STEP 4b] Patching $NGINX_ADMIN_CONF ..."
 cp "$NGINX_ADMIN_CONF" "${NGINX_ADMIN_CONF}.bak.$(date +%Y%m%d%H%M%S)"
 
-# Determine cert path — original uses auth.devoops.lol cert for both domains
-CERT_BASE="/etc/letsencrypt/live/auth.devoops.lol"
+# Determine cert path — original uses auth.sampledomain.com cert for both domains
+CERT_BASE="/etc/letsencrypt/live/auth.sampledomain.com"
 
 cat > "$NGINX_ADMIN_CONF" << NGINXEOF
-# iam.devoops.lol — admin dashboard, LAN-only
+# iam.sampledomain.com — admin dashboard, LAN-only
 server {
     listen 443 ssl;
     server_name ${ADMIN_DOMAIN};
@@ -474,7 +474,7 @@ echo "  Admin console      https://${ADMIN_DOMAIN}  (LAN only — must be on 192
 echo "  OIDC public        https://${PUBLIC_DOMAIN}/realms/master/.well-known/openid-configuration"
 echo ""
 echo "  If you still see 504:"
-echo "  1. Confirm you're accessing iam.devoops.lol from 192.168.2.x (LAN-only)"
+echo "  1. Confirm you're accessing iam.sampledomain.com from 192.168.2.x (LAN-only)"
 echo "  2. Time a full admin console load:  curl -v --max-time 60 http://127.0.0.1:7080/admin/master/console/"
 echo "  3. Watch real-time KC logs:         journalctl -u keycloak -f --no-pager"
 echo "  4. Watch real-time Nginx errors:    tail -f /var/log/nginx/error.log"

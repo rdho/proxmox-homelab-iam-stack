@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # =============================================================================
-# Purpose:     Common security hardening for all devoops.lol VMs
+# Purpose:     Common security hardening for all sampledomain.com VMs
 #              - SSH hardening (password auth for Guacamole passthrough)
 #              - auditd, sysctl hardening, PAM password policy
 #              - User activity logging (bash audit)
@@ -111,7 +111,7 @@ EOF
 # SSH login banner
 cat > /etc/ssh/banner << 'BANNER'
 *******************************************************************************
-AUTHORIZED ACCESS ONLY — devoops.lol infrastructure
+AUTHORIZED ACCESS ONLY — sampledomain.com infrastructure
 This system is monitored. All activity is logged.
 Unauthorized access will be prosecuted to the fullest extent of the law.
 *******************************************************************************
